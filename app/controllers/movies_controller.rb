@@ -16,7 +16,7 @@ class MoviesController < ApplicationController
     if movie.save
       render json: movie.as_json
     else
-      render json: {error: movie.errors.full_messages}, status: 422
+      render json: {errors: movie.errors.full_messages}, status: 422
     end
   end
 end
