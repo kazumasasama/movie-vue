@@ -33,4 +33,13 @@ class MoviesController < ApplicationController
       render json: {errors: movie.errors.full_messages}, status: 422
     end
   end
+
+  def destroy
+    movie = Movie.find(params[:id])
+    if movie.delete
+      render json: movie.as_json
+    else
+      render json: {errors: movie.errors.full_messages}, status: 422
+    end
+  end
 end

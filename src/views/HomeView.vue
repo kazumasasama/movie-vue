@@ -1,6 +1,9 @@
 <template>
   <div class="home">
     <h1>Movies</h1>
+    <div class="error-messages" v-for="error in errors" :key="error">
+      <p>{{ error }}</p>
+    </div>
     <div>
       <button @click="createMovie()">Add Movie</button>
       <p>
@@ -18,9 +21,6 @@
       <p>
         <input v-model="newMovie.image" placeholder="Image URL" type="text" />
       </p>
-    </div>
-    <div v-for="error in errors" :key="error">
-      <p>{{ error }}</p>
     </div>
     <div v-for="movie in movies" :key="movie.id" @click="showMovie(movie)">
       <hr />
@@ -52,7 +52,7 @@
           <input v-model="movie.image" type="text" />
         </p>
         <button @click="updateMovie(movie)">Update</button>
-        <button class="delete-btn">Delete</button>
+        <button @click="destroyMovie(movie)" class="delete-btn">Delete</button>
         <button>Close</button>
       </form>
     </dialog>
@@ -105,6 +105,20 @@ export default {
           this.movies[i] = res.data;
           this.movie = {};
         })
+        .catch((error) => {
+          this.errors = error.response.data.errors;
+        })
+    },
+    destroyMovie(movie) {
+      axios.delete(`movies/${movie.id}`)
+        .then((res) => {
+          let i = this.movies.indexOf(res.data);
+          this.movies.splice(i, 1);
+          this.movie = {};
+        })
+        .catch((error) => {
+          this.errors = error.response.data.errors;
+        })
     }
   },
 }
@@ -120,6 +134,10 @@ export default {
 }
 
 .delete-btn {
+  color: red;
+}
+
+.error-messages {
   color: red;
 }
 </style>
