@@ -24,7 +24,7 @@
     </div>
     <div v-for="movie in movies" :key="movie.id" @click="showMovie(movie)">
       <hr />
-      <hr />
+      <p>click to see more info</p>
       <h3>{{ movie.title }} ({{ movie.year }})</h3>
       <img class="movie-img" :src="movie.image" :alt="movie.title" />
     </div>
@@ -32,22 +32,27 @@
     <dialog id="movie-dialog">
       <form method="dialog">
         <p>
+          Title
           <input v-model="movie.title" type="text" />
         </p>
         <p>
+          Year
           <input v-model="movie.year" type="number" />
         </p>
         <p>
+          Director
           <input v-model="movie.director" type="text" />
         </p>
         <p>
-          <textarea v-model="movie.plot" type="text"></textarea>
+          Plot
+          <textarea class="form-movie-plot" v-model="movie.plot" type="text"></textarea>
         </p>
         <p>
+          Image URL
           <input v-model="movie.image" type="text" />
         </p>
-        <button>Update</button>
-        <button>Delete</button>
+        <button @click="updateMovie(movie)">Update</button>
+        <button class="delete-btn">Delete</button>
         <button>Close</button>
       </form>
     </dialog>
@@ -93,7 +98,14 @@ export default {
           this.errors = error.response.data.errors;
         })
     },
-
+    updateMovie(movie) {
+      axios.patch(`movies/${movie.id}`, movie)
+        .then((res) => {
+          let i = this.movies.indexOf(res.data);
+          this.movies[i] = res.data;
+          this.movie = {};
+        })
+    }
   },
 }
 </script>
@@ -101,5 +113,13 @@ export default {
 <style>
 .movie-img {
   max-height: 250px;
+}
+
+.form-movie-plot {
+  height: 300px;
+}
+
+.delete-btn {
+  color: red;
 }
 </style>
